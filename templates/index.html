@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>PaddleHub OCR在线识别</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', '微软雅黑', Arial, sans-serif;
+            background: #f7f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            padding: 32px 40px 40px 40px;
+        }
+        h2 {
+            text-align: center;
+            color: #2d8cf0;
+            margin-bottom: 30px;
+        }
+        form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        input[type="file"] {
+            border: 1px solid #d9d9d9;
+            padding: 6px;
+            border-radius: 4px;
+            background: #fafbfc;
+        }
+        button {
+            background: #2d8cf0;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #1a73e8;
+        }
+        .flex-row {
+            display: flex;
+            gap: 32px;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .preview {
+            text-align: center;
+            margin-bottom: 0;
+            flex: 1 1 0;
+        }
+        .preview img {
+            max-width: 350px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .result-area {
+            flex: 2 1 0;
+        }
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0 0 24px 0;
+            background: #fafbfc;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .result-table th, .result-table td {
+            border: 1px solid #e5e6eb;
+            padding: 10px 8px;
+            text-align: center;
+        }
+        .result-table th {
+            background: #e6f7ff;
+            color: #2d8cf0;
+            font-weight: 600;
+        }
+        .result-table tr:nth-child(even) {
+            background: #f4f8fb;
+        }
+        .result-table tr:hover {
+            background: #e6f7ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>上传图片进行OCR识别（PaddleHub Serving）</h2>
+        <form method="post" enctype="multipart/form-data">
+            <input type="file" name="file" accept="image/*" required>
+            <button type="submit">上传并识别</button>
+        </form>
+        {% if img_url or result %}
+        <div class="flex-row">
+            <div class="preview">
+                {% if img_url %}
+                    <h3>图片预览：</h3>
+                    <img src="{{ img_url }}" alt="上传图片">
+                {% endif %}
+            </div>
+            <div class="result-area">
+                {% if result %}
+                    <h3 style="color:#2d8cf0;">识别结果：</h3>
+                    {% for block in result %}
+                        <table class="result-table">
+                            <tr>
+                                <th>文本</th>
+                                <th>置信度</th>
+                                <th>坐标</th>
+                            </tr>
+                            {% for item in block.data %}
+                            <tr>
+                                <td>{{ item.text }}</td>
+                                <td>{{ '%.3f' % item.confidence }}</td>
+                                <td>
+                                    [
+                                    {% for point in item.text_box_position %}
+                                        ({{ point[0] }}, {{ point[1] }}){% if not loop.last %}, {% endif %}
+                                    {% endfor %}
+                                    ]
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html> 
