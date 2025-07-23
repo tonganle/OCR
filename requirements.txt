@@ -1,0 +1,7 @@
+Flask
+requests
+opencv-python
+PyQt5
+openpyxl
+paddlehub
+paddlepaddle 

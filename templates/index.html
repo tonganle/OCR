@@ -97,11 +97,35 @@
 <body>
     <div class="container">
         <h2>上传图片进行OCR识别（PaddleHub Serving）</h2>
-        <form method="post" enctype="multipart/form-data">
-            <input type="file" name="file" accept="image/*" multiple required>
+        <form id="upload-form" method="post" enctype="multipart/form-data" style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+            <div id="drop-area" style="border:2px dashed #2d8cf0;padding:10px 20px;border-radius:6px;cursor:pointer;background:#f4f8fb;transition:background 0.2s;">
+                <input type="file" id="file-input" name="file" accept="image/*" multiple required style="display:none;">
+                <span id="drop-text">点击或拖拽图片到此处上传</span>
+            </div>
             <button type="submit">上传并识别</button>
+            {% if results %}
+            <a href="{{ url_for('export') }}" style="margin-left:8px;"><button type="button">导出全部信息</button></a>
+            {% endif %}
         </form>
-
+        <script>
+        // 拖拽上传实现
+        const dropArea = document.getElementById('drop-area');
+        const fileInput = document.getElementById('file-input');
+        dropArea.addEventListener('click', () => fileInput.click());
+        dropArea.addEventListener('dragover', e => {
+            e.preventDefault();
+            dropArea.style.background = '#e6f7ff';
+        });
+        dropArea.addEventListener('dragleave', e => {
+            e.preventDefault();
+            dropArea.style.background = '#f4f8fb';
+        });
+        dropArea.addEventListener('drop', e => {
+            e.preventDefault();
+            dropArea.style.background = '#f4f8fb';
+            fileInput.files = e.dataTransfer.files;
+        });
+        </script>
         {% if results %}
         {% for item in results %}
         <div class="flex-row">
