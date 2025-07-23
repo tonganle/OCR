@@ -98,45 +98,33 @@
     <div class="container">
         <h2>上传图片进行OCR识别（PaddleHub Serving）</h2>
         <form method="post" enctype="multipart/form-data">
-            <input type="file" name="file" accept="image/*" required>
+            <input type="file" name="file" accept="image/*" multiple required>
             <button type="submit">上传并识别</button>
         </form>
-        {% if img_url or result %}
+
+        {% if results %}
+        {% for item in results %}
         <div class="flex-row">
             <div class="preview">
-                {% if img_url %}
-                    <h3>图片预览：</h3>
-                    <img src="{{ img_url }}" alt="上传图片">
-                {% endif %}
+                <h3>图片预览：{{ item.filename }}</h3>
+                <img src="{{ item.img_url }}" alt="上传图片">
             </div>
             <div class="result-area">
-                {% if result %}
-                    <h3 style="color:#2d8cf0;">识别结果：</h3>
-                    {% for block in result %}
-                        <table class="result-table">
-                            <tr>
-                                <th>文本</th>
-                                <th>置信度</th>
-                                <th>坐标</th>
-                            </tr>
-                            {% for item in block.data %}
-                            <tr>
-                                <td>{{ item.text }}</td>
-                                <td>{{ '%.3f' % item.confidence }}</td>
-                                <td>
-                                    [
-                                    {% for point in item.text_box_position %}
-                                        ({{ point[0] }}, {{ point[1] }}){% if not loop.last %}, {% endif %}
-                                    {% endfor %}
-                                    ]
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </table>
-                    {% endfor %}
-                {% endif %}
+                <h3 style="color:#2d8cf0;">关键信息：</h3>
+                <table class="result-table">
+                    <tr><th>字段</th><th>内容</th></tr>
+                    <tr><td>单号</td><td>{{ item.info['单号'] }}</td></tr>
+                    <tr><td>寄件人</td><td>{{ item.info['寄件人'] }}</td></tr>
+                    <tr><td>寄件人电话</td><td>{{ item.info['寄件人电话'] }}</td></tr>
+                    <tr><td>寄件人地址</td><td>{{ item.info['寄件人地址'] }}</td></tr>
+                    <tr><td>收件人</td><td>{{ item.info['收件人'] }}</td></tr>
+                    <tr><td>收件人电话</td><td>{{ item.info['收件人电话'] }}</td></tr>
+                    <tr><td>收件人地址</td><td>{{ item.info['收件人地址'] }}</td></tr>
+                </table>
             </div>
         </div>
+        <hr/>
+        {% endfor %}
         {% endif %}
     </div>
 </body>

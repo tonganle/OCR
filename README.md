@@ -95,3 +95,30 @@ python app.py
 ---
 
 如有其它问题或定制需求，请联系开发者。 
+
+## 使用 PyInstaller 打包为 exe
+
+你可以使用 PyInstaller 将 ocr_client.py 打包为 Windows 下的可执行文件（exe）。
+
+### 打包命令
+
+在已激活 paddle 环境的命令行中执行：
+
+```
+pyinstaller --noconsole --onefile --add-binary "D:/anacond/envs/paddle/Scripts/hub.exe;." ocr_client.py
+```
+
+- `--noconsole`：打包为无控制台窗口的 GUI 程序。
+- `--onefile`：打包为单一 exe 文件。
+- `--add-binary "D:/anacond/envs/paddle/Scripts/hub.exe;."`：将 hub.exe 一起打包到 exe 同目录。
+
+### 注意事项
+
+1. 需提前安装好 PyInstaller：
+   ```
+   pip install pyinstaller
+   ```
+2. 打包时请确保 hub.exe 路径与你本机实际路径一致。
+3. 打包完成后，exe 文件在 `dist/ocr_client.exe`。
+4. 目标电脑需有完整的 Python 环境和 paddlehub 相关依赖，否则 exe 可能无法独立运行。
+5. 若需彻底免安装运行，建议使用 conda-pack 打包整个环境，详见本文件相关说明。 
